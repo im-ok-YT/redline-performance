@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redline Performance | Vivid RP</title>
+    <style>
+        @font-face {
+            font-family: 'Pricedown';
+            src: url('https://fonts.cdnfonts.com/s/38438/Pricedown.woff') format('woff');
+        }
+        body {
+            background-color: #333333; /* Dark grey background */
+            margin: 0;
+            font-family: Arial, sans-serif;
+            color: #FFFFFF; /* White text color */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow-y: scroll; /* Enable vertical scrolling */
+            overflow-x: hidden; /* Hide horizontal scrollbar */
+        }
+        .header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            width: 100%;
+        }
+        .header img {
+            width: 150px; /* Adjusted width for smaller logo */
+            height: auto;
+        }
+        .line {
+            position: absolute;
+            top: 50%;
+            width: 20%;
+            height: 5px;
+            background: linear-gradient(to right, red, silver);
+        }
+        .line.left {
+            left: 0;
+            transform: translateY(-50%);
+        }
+        .line.right {
+            right: 0;
+            transform: translateY(-50%);
+        }
+        .content-container {
+            flex: 1;
+            width: 100%;
+            overflow-y: auto; /* Enable vertical scrolling */
+            overflow-x: hidden; /* Hide horizontal scrollbar */
+        }
+        .content {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 10px; /* Adjusted gap */
+            padding: 20px;
+            width: 100%; /* Full width */
+            flex-wrap: wrap;
+        }
+        .folder {
+            background-color: #444;
+            padding: 10px;
+            border: 2px solid #555;
+            width: 300px; /* Adjusted folder width */
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .folder-bundle {
+            background-color: #444;
+            padding: 10px;
+            border: 2px solid #555;
+            width: 300px; /* Adjusted folder width */
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .folder-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        .folder-header h3 {
+            margin: 0;
+            font-size: 20px; /* Adjusted font size */
+            font-family: 'Pricedown', sans-serif; /* Use Pricedown font */
+        }
+        .folder-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-in-out;
+            padding-top: 10px; /* Add padding to top of folder content */
+        }
+        .folder-content.open {
+            max-height: 1000px; /* Large max-height to accommodate content */
+        }
+        .folder-content .custom-checkbox,
+        .folder-content .custom-select,
+        .folder-content .custom-radio-group {
+            margin-bottom: 10px;
+        }
+        .custom-checkbox {
+            display: flex;
+            align-items: center;
+        }
+        .custom-checkbox input[type="checkbox"] {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #FFFFFF;
+            border-radius: 3px;
+            background: #333333;
+            cursor: pointer;
+            outline: none;
+            transition: background 0.3s;
+        }
+        .custom-checkbox input[type="checkbox"]:checked {
+            background: #FF0000;
+        }
+        .custom-checkbox input[type="checkbox"]:disabled {
+            background: #555555;
+            cursor: not-allowed;
+        }
+        .custom-checkbox label {
+            margin-left: 10px;
+            font-size: 18px;
+        }
+        .custom-select {
+            display: none;
+            width: 100%;
+        }
+        .custom-select select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #FFFFFF;
+            background-color: #333333;
+            color: #FFFFFF;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+        }
+        .custom-radio-group {
+            display: none;
+            flex-direction: row; /* Arrange radio buttons in a row */
+            align-items: center;
+            flex-wrap: wrap; /* Allow wrapping */
+        }
+        .custom-radio-group input[type="radio"] {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #FFFFFF;
+            border-radius: 50%;
+            background: #333333;
+            cursor: pointer;
+            outline: none;
+            transition: background 0.3s;
+            margin-right: 10px;
+        }
+        .custom-radio-group input[type="radio"]:checked {
+            background: #FF0000;
+        }
+        .custom-radio-group label {
+            display: flex;
+            align-items: center;
+            margin-right: 20px; /* Add spacing between radio button groups */
+            font-size: 18px;
+        }
+        .total {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-family: 'Pricedown', sans-serif;
+            color: #6BBE44; /* GTA Money green color */
+            font-size: 36px; /* Bigger font size */
+        }
+        .footer {
+            background-color: #444;
+            padding: 10px;
+            text-align: center;
+            width: 100%;
+            position: relative;
+        }
+        .footer img {
+            width: 50px;
+            height: auto;
+        }
+        .clear-button, .post-button {
+            position: absolute;
+            top: 20px;
+            background-color: transparent;
+            color: #FFFFFF;
+            border: 2px solid #FF0000;
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-family: 'Pricedown', sans-serif; /* Use Pricedown font */
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .clear-button:hover, .post-button:hover {
+            background-color: rgba(255, 0, 0, 0.2);
+        }
+        .clear-button {
+            left: 20px;
+        }
+        .post-button {
+            left: 150px;
+        }
+        .post-box {
+            background-color: #444;
+            border: 2px solid #555;
+            border-radius: 5px;
+            padding: 20px;
+            margin: 20px;
+            position: relative;
+            width: calc(100% - 40px); /* Adjust width to fit within the container */
+            box-sizing: border-box; /* Include padding and border in width calculation */
+            overflow: auto; /* Ensure content within the box is scrollable */
+        }
+        .post-box p {
+            margin: 0;
+            font-size: 18px;
+            white-space: pre-wrap; /* Preserve whitespace formatting */
+        }
+        .copy-button {
+            position: absolute;
+            top: 10px;
+            right: 40px;
+            background-color: transparent;
+            color: #FFFFFF;
+            border: 2px solid #FF0000;
+            padding: 5px 10px;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-family: 'Pricedown', sans-serif; /* Use Pricedown font */
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .copy-button:hover {
+            background-color: rgba(255, 0, 0, 0.2);
+        }
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: transparent;
+            color: #FFFFFF;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .discount-checkbox {
+            display: flex;
+            align-items: center;
+            position: absolute;
+            top: 80px;
+            right: 20px;
+        }
+        .discount-checkbox input[type="checkbox"] {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #FFFFFF;
+            border-radius: 3px;
+            background: #333333;
+            cursor: pointer;
+            outline: none;
+            transition: background 0.3s;
+        }
+        .discount-checkbox input[type="checkbox"]:checked {
+            background: #FF0000;
+        }
+        .discount-checkbox label {
+            margin-left: 10px;
+            font-size: 18px;
+        }
+        .discount-radios {
+            display: none;
+            flex-direction: row;
+            position: absolute;
+            top: 120px;
+            right: 20px;
+            gap: 20px;
+        }
+        /* Hide scrollbars */
+        .content-container::-webkit-scrollbar {
+            width: 0px;
+            background: transparent; /* Make the scrollbar invisible */
+        }
+        body::-webkit-scrollbar {
+            width: 0px;
+            background: transparent; /* Make the scrollbar invisible */
+        }
+        /* Media query for mobile devices */
+        @media (max-width: 768px) {
+            .clear-button, .post-button {
+                position: static;
+                margin-top: 10px;
+                width: calc(100% - 40px);
+            }
+            .total {
+                top: auto;
+                bottom: 20px;
+                right: 20px;
+            }
+            .discount-checkbox {
+                position: static;
+                margin-top: 20px;
+            }
+            .discount-radios {
+                position: static;
+                flex-direction: column;
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="line left"></div>
+        <img src="https://performanceredline.com/wp-content/uploads/2021/03/logo-performance-redline.png" alt="Logo">
+        <div class="line right"></div>
+    </div>
+    <div class="total" id="totalAmount">$0</div>
+    <div class="discount-checkbox">
+        <input type="checkbox" id="discountCheckbox" onchange="toggleDiscountRadios()">
+        <label for="discountCheckbox">Discount?</label>
+    </div>
+    <div class="discount-radios" id="discountRadios">
+        <label>
+            <input type="radio" name="discountOption" value="20" onchange="updateTotal()">
+            PD
+        </label>
+        <label>
+            <input type="radio" name="discountOption" value="20" onchange="updateTotal()">
+            EMS
+        </label>
+        <label>
+            <input type="radio" name="discountOption" value="20" onchange="updateTotal()">
+            BS
+        </label>
+    </div>
+    <div class="content-container">
+        <div class="content">
+            <div class="folder">
+                <div class="folder-header" onclick="toggleFolder('repairsFolderContent', 'repairsFolderIcon')">
+                    <h3>Repairs</h3>
+                    <span id="repairsFolderIcon">+</span>
+                </div>
+                <div class="folder-content" id="repairsFolderContent">
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="fullRepair" value="7500">
+                        <label for="fullRepair">Full Repair ($7500)</label>
+                    </div>
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="partialRepair" value="4500">
+                        <label for="partialRepair">Partial Repair ($4500)</label>
+                    </div>
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="oneCategoryRepair" value="2500">
+                        <label for="oneCategoryRepair">One-Category Repair ($2500)</label>
+                    </div>
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="blownVehicle" value="15000">
+                        <label for="blownVehicle">Blown Vehicle ($15000)</label>
+                    </div>
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="tires" value="1000">
+                        <label for="tires">Tires ($1000)</label>
+                    </div>
+                    <div class="custom-select" id="tiresDropdown">
+                        <select id="tiresDropdownSelect">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                        </select>
+                    </div>
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="advancedRepairKits" value="5000">
+                        <label for="advancedRepairKits">Advanced Repair Kits ($5000)</label>
+                    </div>
+                    <div class="custom-select" id="kitsDropdown">
+                        <select id="kitsDropdownSelect">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="folder">
+                <div class="folder-header" onclick="toggleFolder('cosmeticsFolderContent', 'cosmeticsFolderIcon')">
+                    <h3>Cosmetics</h3>
+                    <span id="cosmeticsFolderIcon">+</span>
+                </div>
+                <div class="folder-content" id="cosmeticsFolderContent">
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="livery" value="10000">
+                        <label for="livery">Livery ($10000)</label>
+                    </div>
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="paint" value="2500">
+                        <label for="paint">Paint ($2500)</label>
+                    </div>
+                    <div class="custom-select" id="paintDropdown">
+                        <select id="paintDropdownSelect">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                        </select>
+                    </div>
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="tint" value="7500">
+                        <label for="tint">Tint ($7500)</label>
+                    </div>
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="rims" value="7500">
+                        <label for="rims">Rims ($7500)</label>
+                    </div>
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="rollCage" value="7000">
+                        <label for="rollCage">Roll Cage ($7000)</label>
+                    </div>
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="spoiler" value="3000">
+                        <label for="spoiler">Spoiler ($3000)</label>
+                    </div>
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="exhaust" value="3000">
+                        <label for="exhaust">Exhaust ($3000)</label>
+                    </div>
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="hood" value="3000">
+                        <label for="hood">Hood ($3000)</label>
+                    </div>
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="roof" value="3000">
+                        <label for="roof">Roof ($3000)</label>
+                    </div>
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="bumper" value="3000">
+                        <label for="bumper">Bumper ($3000)</label>
+                    </div>
+                    <div class="custom-select" id="bumperDropdown">
+                        <select id="bumperDropdownSelect">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                        </select>
+                    </div>
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="skirt" value="3000">
+                        <label for="skirt">Skirt ($3000)</label>
+                    </div>
+                    <div class="custom-select" id="skirtDropdown">
+                        <select id="skirtDropdownSelect">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                        </select>
+                    </div>
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="seat" value="5000">
+                        <label for="seat">Seat ($5000)</label>
+                    </div>
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="horn" value="3000">
+                        <label for="horn">Horn ($3000)</label>
+                    </div>
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="plate" value="3000">
+                        <label for="plate">Plate ($3000)</label>
+                    </div>
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="internalExternal" value="3000">
+                        <label for="internalExternal">Internal/External Cosmetics ($3000)</label>
+                    </div>
+                    <div class="custom-select" id="internalExternalDropdown">
+                        <select id="internalExternalDropdownSelect">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="folder">
+                <div class="folder-header" onclick="toggleFolder('performanceFolderContent', 'performanceFolderIcon')">
+                    <h3>Performance</h3>
+                    <span id="performanceFolderIcon">+</span>
+                </div>
+                <div class="folder-content" id="performanceFolderContent">
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="engine" value="0">
+                        <label for="engine">Engine</label>
+                    </div>
+                    <div class="custom-radio-group" id="engineRadios">
+                        <label>
+                            <input type="radio" name="engineTier" value="35000">
+                            T4 ($35000)
+                        </label>
+                        <label>
+                            <input type="radio" name="engineTier" value="50000">
+                            T5 ($50000)
+                        </label>
+                    </div>
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="transmission" value="0">
+                        <label for="transmission">Transmission</label>
+                    </div>
+                    <div class="custom-radio-group" id="transmissionRadios">
+                        <label>
+                            <input type="radio" name="transmissionTier" value="20000">
+                            T3 ($20000)
+                        </label>
+                        <label>
+                            <input type="radio" name="transmissionTier" value="25000">
+                            T4 ($25000)
+                        </label>
+                    </div>
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="brakes" value="30000">
+                        <label for="brakes">Brakes ($30000)</label>
+                    </div>
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="suspension" value="0">
+                        <label for="suspension">Suspension</label>
+                    </div>
+                    <div class="custom-radio-group" id="suspensionRadios">
+                        <label>
+                            <input type="radio" name="suspensionTier" value="10000">
+                            T1 ($10000)
+                        </label>
+                        <label>
+                            <input type="radio" name="suspensionTier" value="12500">
+                            T2 ($12500)
+                        </label>
+                        <label>
+                            <input type="radio" name="suspensionTier" value="15000">
+                            T3 ($15000)
+                        </label>
+                        <label>
+                            <input type="radio" name="suspensionTier" value="20000">
+                            T4 ($20000)
+                        </label>
+                        <label>
+                            <input type="radio" name="suspensionTier" value="25000">
+                            T5 ($25000)
+                        </label>
+                    </div>
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="oilPump" value="15000">
+                        <label for="oilPump">Oil Pump ($15000)</label>
+                    </div>
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="driveShaft" value="15000">
+                        <label for="driveShaft">Drive Shaft ($15000)</label>
+                    </div>
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="cylinderHead" value="15000">
+                        <label for="cylinderHead">Cylinder Head ($15000)</label>
+                    </div>
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="batteryCables" value="15000">
+                        <label for="batteryCables">Battery Cables ($15000)</label>
+                    </div>
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="fuelTank" value="15000">
+                        <label for="fuelTank">Fuel Tank ($15000)</label>
+                    </div>
+                </div>
+            </div>
+            <div class="folder">
+                <div class="folder-header" onclick="toggleFolder('addonsFolderContent', 'addonsFolderIcon')">
+                    <h3>Add-ons</h3>
+                    <span id="addonsFolderIcon">+</span>
+                </div>
+                <div class="folder-content" id="addonsFolderContent">
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="superchargerTurbo" value="45000">
+                        <label for="superchargerTurbo">Supercharger/Turbo ($45000)</label>
+                    </div>
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="antiLag" value="15000">
+                        <label for="antiLag">Anti-Lag ($15000)</label>
+                    </div>
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="vehicleArmor" value="45000">
+                        <label for="vehicleArmor">Vehicle Armor ($45000)</label>
+                    </div>
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="driftTires" value="15000">
+                        <label for="driftTires">Drift Tires ($15000)</label>
+                    </div>
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="driftTireSmoke" value="7500">
+                        <label for="driftTireSmoke">Drift Tire Smoke ($7500)</label>
+                    </div>
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="xenonHeadlights" value="5000">
+                        <label for="xenonHeadlights">Xenon Headlights ($5000)</label>
+                    </div>
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="underglow" value="7500">
+                        <label for="underglow">Underglow ($7500)</label>
+                    </div>
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="neonColorChanger" value="2000">
+                        <label for="neonColorChanger">Neon Color Changer ($2000)</label>
+                    </div>
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="racingHarness" value="20000">
+                        <label for="racingHarness">Racing Harness ($20000)</label>
+                    </div>
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="nosInstallation" value="15000">
+                        <label for="nosInstallation">NOS Installation ($15000)</label>
+                    </div>
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="nosColorChanger" value="15000">
+                        <label for="nosColorChanger">NOS Color Changer ($15000)</label>
+                    </div>
+                </div>
+            </div>
+            <div class="folder-bundle">
+                <div class="folder-header" onclick="toggleFolder('bundlesFolderContent', 'bundlesFolderIcon')">
+                    <h3>Bundles</h3>
+                    <span id="bundlesFolderIcon">+</span>
+                </div>
+                <div class="folder-content" id="bundlesFolderContent">
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="partialCosmetics" value="50000">
+                        <label for="partialCosmetics">Partial Cosmetics ($50000)</label>
+                    </div>
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="pdPackage" value="60000">
+                        <label for="pdPackage">PD Package ($60000)</label>
+                    </div>
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="fullPerformanceEMS" value="175000">
+                        <label for="fullPerformanceEMS">Full Performance EMS Package ($175000)</label>
+                    </div>
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="completeCosmeticsPerformance" value="0">
+                        <label for="completeCosmeticsPerformance">Complete Cosmetics and Performance</label>
+                    </div>
+                    <div class="custom-radio-group" id="completeCosmeticsPerformanceRadios">
+                        <label>
+                            <input type="radio" name="completeCosmeticsPerformanceOption" value="200000">
+                            Car ($200000)
+                        </label>
+                        <label>
+                            <input type="radio" name="completeCosmeticsPerformanceOption" value="160000">
+                            Motorcycle ($160000)
+                        </label>
+                    </div>
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="fullT3Internals" value="60000">
+                        <label for="fullT3Internals">Full T3 Internals Package ($60000)</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="postBoxContainer"></div> <!-- Container for post boxes -->
+    </div>
+    <button class="clear-button" onclick="clearAll()">Clear All</button>
+    <button class="post-button" onclick="generatePost()">Post</button>
+    <div class="footer">
+        <img src="https://dunb17ur4ymx4.cloudfront.net/webstore/logos/dff4075a111d8b04e1dacb963331e903fa457e04.png" alt="Footer Logo">
+    </div>
+    <script>
+        function toggleFolder(contentId, iconId) {
+            var folderContent = document.getElementById(contentId);
+            var folderIcon = document.getElementById(iconId);
+            if (folderContent.classList.contains('open')) {
+                folderContent.classList.remove('open');
+                folderIcon.textContent = "+";
+            } else {
+                folderContent.classList.add('open');
+                folderIcon.textContent = "-";
+            }
+        }
+
+        function toggleDiscountRadios() {
+            var discountCheckbox = document.getElementById('discountCheckbox');
+            var discountRadios = document.getElementById('discountRadios');
+            if (discountCheckbox.checked) {
+                discountRadios.style.display = 'flex';
+            } else {
+                discountRadios.style.display = 'none';
+                var radios = document.querySelectorAll('.discount-radios input[type="radio"]');
+                radios.forEach(function(radio) {
+                    radio.checked = false;
+                });
+                updateTotal(); // Ensure total is updated when discount is removed
+            }
+        }
+
+        function updateTotal() {
+            var checkboxes = document.querySelectorAll('.custom-checkbox input[type="checkbox"]');
+            var tiresDropdownSelect = document.getElementById('tiresDropdownSelect');
+            var kitsDropdownSelect = document.getElementById('kitsDropdownSelect');
+            var paintDropdownSelect = document.getElementById('paintDropdownSelect');
+            var bumperDropdownSelect = document.getElementById('bumperDropdownSelect');
+            var skirtDropdownSelect = document.getElementById('skirtDropdownSelect');
+            var internalExternalDropdownSelect = document.getElementById('internalExternalDropdownSelect');
+            var totalAmount = document.getElementById('totalAmount');
+            var total = 0;
+
+            checkboxes.forEach(function(checkbox) {
+                if (checkbox.checked) {
+                    if (checkbox.id === 'tires') {
+                        total += parseInt(checkbox.value) * parseInt(tiresDropdownSelect.value);
+                    } else if (checkbox.id === 'advancedRepairKits') {
+                        total += parseInt(checkbox.value) * parseInt(kitsDropdownSelect.value);
+                    } else if (checkbox.id === 'paint') {
+                        total += parseInt(checkbox.value) * parseInt(paintDropdownSelect.value);
+                    } else if (checkbox.id === 'bumper') {
+                        total += parseInt(checkbox.value) * parseInt(bumperDropdownSelect.value);
+                    } else if (checkbox.id === 'skirt') {
+                        total += parseInt(checkbox.value) * parseInt(skirtDropdownSelect.value);
+                    } else if (checkbox.id === 'internalExternal') {
+                        total += parseInt(checkbox.value) * parseInt(internalExternalDropdownSelect.value);
+                    } else if (checkbox.id === 'engine') {
+                        var selectedEngine = document.querySelector('input[name="engineTier"]:checked');
+                        if (selectedEngine) {
+                            total += parseInt(selectedEngine.value);
+                        }
+                    } else if (checkbox.id === 'transmission') {
+                        var selectedTransmission = document.querySelector('input[name="transmissionTier"]:checked');
+                        if (selectedTransmission) {
+                            total += parseInt(selectedTransmission.value);
+                        }
+                    } else if (checkbox.id === 'suspension') {
+                        var selectedSuspension = document.querySelector('input[name="suspensionTier"]:checked');
+                        if (selectedSuspension) {
+                            total += parseInt(selectedSuspension.value);
+                        }
+                    } else if (checkbox.id === 'completeCosmeticsPerformance') {
+                        var selectedOption = document.querySelector('input[name="completeCosmeticsPerformanceOption"]:checked');
+                        if (selectedOption) {
+                            total += parseInt(selectedOption.value);
+                        }
+                    } else {
+                        total += parseInt(checkbox.value);
+                    }
+                }
+            });
+
+            var discountCheckbox = document.getElementById('discountCheckbox');
+            if (discountCheckbox.checked) {
+                var selectedDiscount = document.querySelector('input[name="discountOption"]:checked');
+                if (selectedDiscount) {
+                    total = Math.floor(total * 0.8); // Apply 20% discount and round down
+                }
+            }
+
+            totalAmount.textContent = '$' + total;
+        }
+
+        function clearAll() {
+            var checkboxes = document.querySelectorAll('.custom-checkbox input[type="checkbox"]');
+            var radios = document.querySelectorAll('.custom-radio-group input[type="radio"]');
+            var selects = document.querySelectorAll('.custom-select select');
+            
+            checkboxes.forEach(function(checkbox) {
+                checkbox.checked = false;
+                checkbox.disabled = false;
+            });
+
+            radios.forEach(function(radio) {
+                radio.checked = false;
+            });
+
+            selects.forEach(function(select) {
+                select.value = '1';
+            });
+
+            var customSelects = document.querySelectorAll('.custom-select');
+            customSelects.forEach(function(select) {
+                select.style.display = 'none';
+            });
+
+            var customRadioGroups = document.querySelectorAll('.custom-radio-group');
+            customRadioGroups.forEach(function(radioGroup) {
+                radioGroup.style.display = 'none';
+            });
+
+            var discountCheckbox = document.getElementById('discountCheckbox');
+            discountCheckbox.checked = false;
+            toggleDiscountRadios();
+
+            updateTotal(); // Ensure total is updated to $0 after clearing
+        }
+
+        async function generatePost() {
+            var date = new Date().toLocaleDateString();
+            var dutyDone = '';
+            var total = document.getElementById('totalAmount').textContent;
+            var checkboxes = document.querySelectorAll('.custom-checkbox input[type="checkbox"]');
+            var checkedItems = [];
+
+            checkboxes.forEach(function(checkbox) {
+                if (checkbox.checked) {
+                    var label = checkbox.nextElementSibling.textContent;
+                    label = label.replace(/\s\(\$\d+\)/, ''); // Remove value from label
+                    if (checkbox.id === 'tires') {
+                        label += ' x' + document.getElementById('tiresDropdownSelect').value;
+                    } else if (checkbox.id === 'advancedRepairKits') {
+                        label += ' x' + document.getElementById('kitsDropdownSelect').value;
+                    } else if (checkbox.id === 'paint') {
+                        label += ' x' + document.getElementById('paintDropdownSelect').value;
+                    } else if (checkbox.id === 'bumper') {
+                        label += ' x' + document.getElementById('bumperDropdownSelect').value;
+                    } else if (checkbox.id === 'skirt') {
+                        label += ' x' + document.getElementById('skirtDropdownSelect').value;
+                    } else if (checkbox.id === 'internalExternal') {
+                        label += ' x' + document.getElementById('internalExternalDropdownSelect').value;
+                    } else if (checkbox.id === 'engine') {
+                        var selectedEngine = document.querySelector('input[name="engineTier"]:checked');
+                        if (selectedEngine) {
+                            label += ' (' + selectedEngine.nextSibling.textContent.trim().replace(/\s\(\$\d+\)/, '') + ')';
+                        }
+                    } else if (checkbox.id === 'transmission') {
+                        var selectedTransmission = document.querySelector('input[name="transmissionTier"]:checked');
+                        if (selectedTransmission) {
+                            label += ' (' + selectedTransmission.nextSibling.textContent.trim().replace(/\s\(\$\d+\)/, '') + ')';
+                        }
+                    } else if (checkbox.id === 'suspension') {
+                        var selectedSuspension = document.querySelector('input[name="suspensionTier"]:checked');
+                        if (selectedSuspension) {
+                            label += ' (' + selectedSuspension.nextSibling.textContent.trim().replace(/\s\(\$\d+\)/, '') + ')';
+                        }
+                    } else if (checkbox.id === 'completeCosmeticsPerformance') {
+                        var selectedOption = document.querySelector('input[name="completeCosmeticsPerformanceOption"]:checked');
+                        if (selectedOption) {
+                            label += ' (' + selectedOption.nextSibling.textContent.trim().replace(/\s\(\$\d+\)/, '') + ')';
+                        }
+                    }
+                    checkedItems.push(label);
+                }
+            });
+
+            dutyDone = checkedItems.join(', ');
+
+            var postContent = `Date: ${date}\nDuty Done: ${dutyDone}\nPrice Charged: ${total}`;
+
+            var response = await fetch("https://discord.com/api/webhooks/1267315691908894730/8IkFbTmEGsXtp4O312axaufxVnJLjBmPZd-cF5_ZrbMAShgpRXtQGlmIq7qlHpvLGwtD", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    content: postContent
+                })
+            });
+
+            if (response.ok) {
+                clearAll(); // Clear all selections
+                updateTotal(); // Ensure total is updated to $0 after clearing
+            } else {
+                alert("Failed to send message to Discord.");
+            }
+        }
+
+        function copyText(button) {
+            var text = button.parentElement.querySelector('p').innerText;
+            navigator.clipboard.writeText(text).then(function() {
+                alert('Copied to clipboard');
+            }).catch(function(error) {
+                alert('Error copying to clipboard: ' + error);
+            });
+        }
+
+        function deletePost(button) {
+            var postBox = button.parentElement;
+            postBox.remove();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var checkboxes = document.querySelectorAll('.custom-checkbox input[type="checkbox"]');
+            var radios = document.querySelectorAll('.custom-radio-group input[type="radio"]');
+            var fullRepairCheckbox = document.getElementById('fullRepair');
+            var partialRepairCheckbox = document.getElementById('partialRepair');
+            var oneCategoryRepairCheckbox = document.getElementById('oneCategoryRepair');
+            var blownVehicleCheckbox = document.getElementById('blownVehicle');
+            var tiresCheckbox = document.getElementById('tires');
+            var advancedRepairKitsCheckbox = document.getElementById('advancedRepairKits');
+            var paintCheckbox = document.getElementById('paint');
+            var liveryCheckbox = document.getElementById('livery');
+            var tintCheckbox = document.getElementById('tint');
+            var rimsCheckbox = document.getElementById('rims');
+            var rollCageCheckbox = document.getElementById('rollCage');
+            var spoilerCheckbox = document.getElementById('spoiler');
+            var exhaustCheckbox = document.getElementById('exhaust');
+            var hoodCheckbox = document.getElementById('hood');
+            var roofCheckbox = document.getElementById('roof');
+            var bumperCheckbox = document.getElementById('bumper');
+            var skirtCheckbox = document.getElementById('skirt');
+            var seatCheckbox = document.getElementById('seat');
+            var hornCheckbox = document.getElementById('horn');
+            var plateCheckbox = document.getElementById('plate');
+            var internalExternalCheckbox = document.getElementById('internalExternal');
+            var engineCheckbox = document.getElementById('engine');
+            var brakesCheckbox = document.getElementById('brakes');
+            var transmissionCheckbox = document.getElementById('transmission');
+            var suspensionCheckbox = document.getElementById('suspension');
+            var oilPumpCheckbox = document.getElementById('oilPump');
+            var driveShaftCheckbox = document.getElementById('driveShaft');
+            var cylinderHeadCheckbox = document.getElementById('cylinderHead');
+            var batteryCablesCheckbox = document.getElementById('batteryCables');
+            var fuelTankCheckbox = document.getElementById('fuelTank');
+            var xenonHeadlightsCheckbox = document.getElementById('xenonHeadlights');
+            var underglowCheckbox = document.getElementById('underglow');
+            var antiLagCheckbox = document.getElementById('antiLag');
+            var racingHarnessCheckbox = document.getElementById('racingHarness');
+            var fullT3InternalsCheckbox = document.getElementById('fullT3Internals');
+            var tiresDropdown = document.getElementById('tiresDropdown');
+            var tiresDropdownSelect = document.getElementById('tiresDropdownSelect');
+            var kitsDropdown = document.getElementById('kitsDropdown');
+            var kitsDropdownSelect = document.getElementById('kitsDropdownSelect');
+            var paintDropdown = document.getElementById('paintDropdown');
+            var paintDropdownSelect = document.getElementById('paintDropdownSelect');
+            var bumperDropdown = document.getElementById('bumperDropdown');
+            var bumperDropdownSelect = document.getElementById('bumperDropdownSelect');
+            var skirtDropdown = document.getElementById('skirtDropdown');
+            var skirtDropdownSelect = document.getElementById('skirtDropdownSelect');
+            var internalExternalDropdown = document.getElementById('internalExternalDropdown');
+            var internalExternalDropdownSelect = document.getElementById('internalExternalDropdownSelect');
+            var engineRadios = document.getElementById('engineRadios');
+            var transmissionRadios = document.getElementById('transmissionRadios');
+            var suspensionRadios = document.getElementById('suspensionRadios');
+            var completeCosmeticsPerformanceCheckbox = document.getElementById('completeCosmeticsPerformance');
+            var completeCosmeticsPerformanceRadios = document.getElementById('completeCosmeticsPerformanceRadios');
+            var partialCosmeticsCheckbox = document.getElementById('partialCosmetics');
+            var pdPackageCheckbox = document.getElementById('pdPackage');
+            var totalAmount = document.getElementById('totalAmount');
+
+            function disableCheckboxes(disabled) {
+                checkboxes.forEach(function(checkbox) {
+                    if (!checkbox.checked) {
+                        checkbox.disabled = disabled;
+                    }
+                });
+            }
+
+            function handleCheckboxChange() {
+                var checkedFullRepair = fullRepairCheckbox.checked;
+                var checkedPartialRepair = partialRepairCheckbox.checked;
+                var checkedOneCategoryRepair = oneCategoryRepairCheckbox.checked;
+                var checkedBlownVehicle = blownVehicleCheckbox.checked;
+
+                if (checkedFullRepair) {
+                    partialRepairCheckbox.disabled = true;
+                    oneCategoryRepairCheckbox.disabled = true;
+                    blownVehicleCheckbox.disabled = true;
+                } else if (checkedPartialRepair) {
+                    fullRepairCheckbox.disabled = true;
+                    oneCategoryRepairCheckbox.disabled = true;
+                    blownVehicleCheckbox.disabled = true;
+                } else if (checkedOneCategoryRepair) {
+                    fullRepairCheckbox.disabled = true;
+                    partialRepairCheckbox.disabled = true;
+                    blownVehicleCheckbox.disabled = true;
+                } else if (checkedBlownVehicle) {
+                    fullRepairCheckbox.disabled = true;
+                    partialRepairCheckbox.disabled = true;
+                    oneCategoryRepairCheckbox.disabled = true;
+                    tiresCheckbox.disabled = true;
+                } else {
+                    disableCheckboxes(false);
+                }
+
+                if (tiresCheckbox.checked) {
+                    tiresDropdown.style.display = 'block';
+                } else {
+                    tiresDropdown.style.display = 'none';
+                }
+
+                if (advancedRepairKitsCheckbox.checked) {
+                    kitsDropdown.style.display = 'block';
+                } else {
+                    kitsDropdown.style.display = 'none';
+                }
+
+                if (paintCheckbox.checked) {
+                    paintDropdown.style.display = 'block';
+                } else {
+                    paintDropdown.style.display = 'none';
+                }
+
+                if (bumperCheckbox.checked) {
+                    bumperDropdown.style.display = 'block';
+                } else {
+                    bumperDropdown.style.display = 'none';
+                }
+
+                if (skirtCheckbox.checked) {
+                    skirtDropdown.style.display = 'block';
+                } else {
+                    skirtDropdown.style.display = 'none';
+                }
+
+                if (internalExternalCheckbox.checked) {
+                    internalExternalDropdown.style.display = 'block';
+                } else {
+                    internalExternalDropdown.style.display = 'none';
+                }
+
+                if (engineCheckbox.checked) {
+                    engineRadios.style.display = 'flex';
+                } else {
+                    engineRadios.style.display = 'none';
+                }
+
+                if (transmissionCheckbox.checked) {
+                    transmissionRadios.style.display = 'flex';
+                } else {
+                    transmissionRadios.style.display = 'none';
+                }
+
+                if (suspensionCheckbox.checked) {
+                    suspensionRadios.style.display = 'flex';
+                } else {
+                    suspensionRadios.style.display = 'none';
+                }
+
+                if (completeCosmeticsPerformanceCheckbox.checked) {
+                    completeCosmeticsPerformanceRadios.style.display = 'flex';
+                } else {
+                    completeCosmeticsPerformanceRadios.style.display = 'none';
+                }
+
+                if (partialCosmeticsCheckbox.checked) {
+                    paintCheckbox.checked = false;
+                    paintCheckbox.disabled = true;
+                    tintCheckbox.checked = false;
+                    tintCheckbox.disabled = true;
+                    xenonHeadlightsCheckbox.checked = false;
+                    xenonHeadlightsCheckbox.disabled = true;
+                    underglowCheckbox.checked = false;
+                    underglowCheckbox.disabled = true;
+                    rimsCheckbox.checked = false;
+                    rimsCheckbox.disabled = true;
+                    hoodCheckbox.checked = false;
+                    hoodCheckbox.disabled = true;
+                    bumperCheckbox.checked = false;
+                    bumperCheckbox.disabled = true;
+                    skirtCheckbox.checked = false;
+                    skirtCheckbox.disabled = true;
+                    roofCheckbox.checked = false;
+                    roofCheckbox.disabled = true;
+                } else {
+                    paintCheckbox.disabled = false;
+                    tintCheckbox.disabled = false;
+                    xenonHeadlightsCheckbox.disabled = false;
+                    underglowCheckbox.disabled = false;
+                    rimsCheckbox.disabled = false;
+                    hoodCheckbox.disabled = false;
+                    bumperCheckbox.disabled = false;
+                    skirtCheckbox.disabled = false;
+                    roofCheckbox.disabled = false;
+                }
+
+                if (pdPackageCheckbox.checked) {
+                    antiLagCheckbox.checked = false;
+                    antiLagCheckbox.disabled = true;
+                    racingHarnessCheckbox.checked = false;
+                    racingHarnessCheckbox.disabled = true;
+                    oilPumpCheckbox.checked = false;
+                    oilPumpCheckbox.disabled = true;
+                    driveShaftCheckbox.checked = false;
+                    driveShaftCheckbox.disabled = true;
+                    cylinderHeadCheckbox.checked = false;
+                    cylinderHeadCheckbox.disabled = true;
+                    batteryCablesCheckbox.checked = false;
+                    batteryCablesCheckbox.disabled = true;
+                    fuelTankCheckbox.checked = false;
+                    fuelTankCheckbox.disabled = true;
+                    fullT3InternalsCheckbox.checked = false;
+                    fullT3InternalsCheckbox.disabled = true;
+                } else {
+                    antiLagCheckbox.disabled = false;
+                    racingHarnessCheckbox.disabled = false;
+                    oilPumpCheckbox.disabled = false;
+                    driveShaftCheckbox.disabled = false;
+                    cylinderHeadCheckbox.disabled = false;
+                    batteryCablesCheckbox.disabled = false;
+                    fuelTankCheckbox.disabled = false;
+                    fullT3InternalsCheckbox.disabled = false;
+                }
+
+                updateTotal();
+            }
+
+            checkboxes.forEach(function(checkbox) {
+                checkbox.addEventListener('change', handleCheckboxChange);
+            });
+
+            radios.forEach(function(radio) {
+                radio.addEventListener('change', updateTotal);
+            });
+
+            tiresDropdownSelect.addEventListener('change', updateTotal);
+            kitsDropdownSelect.addEventListener('change', updateTotal);
+            paintDropdownSelect.addEventListener('change', updateTotal);
+            bumperDropdownSelect.addEventListener('change', updateTotal);
+            skirtDropdownSelect.addEventListener('change', updateTotal);
+            internalExternalDropdownSelect.addEventListener('change', updateTotal);
+
+            // Ensure total is updated to $0 after clearing
+            document.querySelector('.clear-button').addEventListener('click', function() {
+                setTimeout(updateTotal, 0);
+            });
+        });
+    </script>
+</body>
+</html>
