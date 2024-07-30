@@ -263,7 +263,7 @@
             display: flex;
             align-items: center;
             position: absolute;
-            top: 80px;
+            top: 100px;
             right: 20px;
         }
         .discount-checkbox input[type="checkbox"] {
@@ -290,9 +290,30 @@
             display: none;
             flex-direction: row;
             position: absolute;
-            top: 120px;
+            top: 135px;
             right: 20px;
             gap: 20px;
+        }
+        .discount-radios label {
+            display: flex;
+            align-items: center;
+        }
+        .discount-radios input[type="radio"] {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #FFFFFF;
+            border-radius: 50%;
+            background: #333333;
+            cursor: pointer;
+            outline: none;
+            transition: background 0.3s;
+            margin-right: 10px;
+        }
+        .discount-radios input[type="radio"]:checked {
+            background: #FF0000;
         }
         /* Hide scrollbars */
         .content-container::-webkit-scrollbar {
@@ -340,15 +361,15 @@
     </div>
     <div class="discount-radios" id="discountRadios">
         <label>
-            <input type="radio" name="discountOption" value="20" onchange="updateTotal()">
+            <input type="radio" name="discountOption" value="PD" onchange="updateTotal()">
             PD
         </label>
         <label>
-            <input type="radio" name="discountOption" value="20" onchange="updateTotal()">
+            <input type="radio" name="discountOption" value="EMS" onchange="updateTotal()">
             EMS
         </label>
         <label>
-            <input type="radio" name="discountOption" value="20" onchange="updateTotal()">
+            <input type="radio" name="discountOption" value="BS" onchange="updateTotal()">
             BS
         </label>
     </div>
@@ -893,7 +914,18 @@
 
             var postContent = `Date: ${date}\nDuty Done: ${dutyDone}\nPrice Charged: ${total}`;
 
-            var response = await fetch("https://discord.com/api/webhooks/1267315691908894730/8IkFbTmEGsXtp4O312axaufxVnJLjBmPZd-cF5_ZrbMAShgpRXtQGlmIq7qlHpvLGwtD", {
+            var webhookUrl = "https://discord.com/api/webhooks/1267772867198718066/n8KMupM8pUKaheIooEEc4nza67f551si0LyrM4I8quYdszl8NuoGiffhC3KNC22c5eLX"; // Default webhook URL
+
+            var selectedDiscount = document.querySelector('input[name="discountOption"]:checked');
+            if (selectedDiscount) {
+                if (selectedDiscount.value === "PD") {
+                    webhookUrl = "https://discord.com/api/webhooks/1267773280786448434/1hKFSokBYbbkzaReuYUuMDfpicQLlzeiWh8wqVA7rirfr5yZ3nA6_E9fv_WTUnG0KJVU";
+                } else if (selectedDiscount.value === "EMS") {
+                    webhookUrl = "https://discord.com/api/webhooks/1267773357424902166/7F1Aozi0w2TPXGiEufL2zqMHGE6vh6QJlR6BxugFC9tX17CA4FpQMFPyUfKf3g5F4IFs";
+                }
+            }
+
+            var response = await fetch(webhookUrl, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
