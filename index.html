@@ -335,16 +335,70 @@
                 top: auto;
                 bottom: 20px;
                 right: 20px;
+                font-size: 24px; /* Smaller font size for mobile */
             }
             .discount-checkbox {
                 position: static;
                 margin-top: 20px;
+                justify-content: center; /* Center the discount checkbox */
+                width: calc(100% - 40px);
             }
             .discount-radios {
                 position: static;
-                flex-direction: column;
+                flex-direction: row;
+                justify-content: center; /* Center the discount radios */
                 margin-top: 10px;
+                width: calc(100% - 40px);
             }
+            .content {
+                flex-direction: column; /* Stack folders vertically */
+                align-items: center; /* Center folders */
+            }
+            .folder, .folder-bundle {
+                width: calc(100% - 40px); /* Full width with padding */
+                max-width: 400px; /* Max width for better readability */
+            }
+            .folder-header h3 {
+                font-size: 18px; /* Adjust font size for mobile */
+            }
+            .folder-content .custom-checkbox label,
+            .folder-content .custom-radio-group label {
+                font-size: 16px; /* Adjust font size for mobile */
+            }
+            .footer {
+                margin-top: auto; /* Push footer to the bottom */
+            }
+        }
+        /* Popup Styles */
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #444;
+            border: 2px solid #555;
+            border-radius: 5px;
+            padding: 20px;
+            z-index: 1000;
+        }
+        .popup h3 {
+            margin: 0;
+            font-size: 20px;
+        }
+        .popup button {
+            background-color: transparent;
+            color: #FFFFFF;
+            border: 2px solid #FF0000;
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-family: 'Pricedown', sans-serif; /* Use Pricedown font */
+            transition: background-color 0.3s, color 0.3s;
+            margin-right: 10px;
+        }
+        .popup button:hover {
+            background-color: rgba(255, 0, 0, 0.2);
         }
     </style>
 </head>
@@ -361,15 +415,15 @@
     </div>
     <div class="discount-radios" id="discountRadios">
         <label>
-            <input type="radio" name="discountOption" value="PD" onchange="updateTotal()">
+            <input type="radio" name="discountOption" value="PD" onchange="checkWorkVehicle('PD')">
             PD
         </label>
         <label>
-            <input type="radio" name="discountOption" value="EMS" onchange="updateTotal()">
+            <input type="radio" name="discountOption" value="EMS" onchange="checkWorkVehicle('EMS')">
             EMS
         </label>
         <label>
-            <input type="radio" name="discountOption" value="BS" onchange="updateTotal()">
+            <input type="radio" name="discountOption" value="BS" onchange="checkWorkVehicle('BS')">
             BS
         </label>
     </div>
@@ -382,15 +436,15 @@
                 </div>
                 <div class="folder-content" id="repairsFolderContent">
                     <div class="custom-checkbox">
-                        <input type="checkbox" id="fullRepair" value="7500">
+                        <input type="checkbox" id="fullRepair" value="7500" onchange="checkWorkVehicle()">
                         <label for="fullRepair">Full Repair ($7500)</label>
                     </div>
                     <div class="custom-checkbox">
-                        <input type="checkbox" id="partialRepair" value="4500">
+                        <input type="checkbox" id="partialRepair" value="4500" onchange="checkWorkVehicle()">
                         <label for="partialRepair">Partial Repair ($4500)</label>
                     </div>
                     <div class="custom-checkbox">
-                        <input type="checkbox" id="oneCategoryRepair" value="2500">
+                        <input type="checkbox" id="oneCategoryRepair" value="2500" onchange="checkWorkVehicle()">
                         <label for="oneCategoryRepair">One-Category Repair ($2500)</label>
                     </div>
                     <div class="custom-checkbox">
@@ -398,11 +452,11 @@
                         <label for="blownVehicle">Blown Vehicle ($15000)</label>
                     </div>
                     <div class="custom-checkbox">
-                        <input type="checkbox" id="tires" value="1000">
+                        <input type="checkbox" id="tires" value="1000" onchange="checkWorkVehicle()">
                         <label for="tires">Tires ($1000)</label>
                     </div>
                     <div class="custom-select" id="tiresDropdown">
-                        <select id="tiresDropdownSelect">
+                        <select id="tiresDropdownSelect" onchange="updateTotal()">
                             <option value="1">1</option>
                             <option value="2">2</option>
                             <option value="3">3</option>
@@ -414,7 +468,7 @@
                         <label for="advancedRepairKits">Advanced Repair Kits ($5000)</label>
                     </div>
                     <div class="custom-select" id="kitsDropdown">
-                        <select id="kitsDropdownSelect">
+                        <select id="kitsDropdownSelect" onchange="updateTotal()">
                             <option value="1">1</option>
                             <option value="2">2</option>
                             <option value="3">3</option>
@@ -444,7 +498,7 @@
                         <label for="paint">Paint ($2500)</label>
                     </div>
                     <div class="custom-select" id="paintDropdown">
-                        <select id="paintDropdownSelect">
+                        <select id="paintDropdownSelect" onchange="updateTotal()">
                             <option value="1">1</option>
                             <option value="2">2</option>
                             <option value="3">3</option>
@@ -490,7 +544,7 @@
                         <label for="bumper">Bumper ($3000)</label>
                     </div>
                     <div class="custom-select" id="bumperDropdown">
-                        <select id="bumperDropdownSelect">
+                        <select id="bumperDropdownSelect" onchange="updateTotal()">
                             <option value="1">1</option>
                             <option value="2">2</option>
                             <option value="3">3</option>
@@ -508,7 +562,7 @@
                         <label for="skirt">Skirt ($3000)</label>
                     </div>
                     <div class="custom-select" id="skirtDropdown">
-                        <select id="skirtDropdownSelect">
+                        <select id="skirtDropdownSelect" onchange="updateTotal()">
                             <option value="1">1</option>
                             <option value="2">2</option>
                             <option value="3">3</option>
@@ -538,7 +592,7 @@
                         <label for="internalExternal">Internal/External Cosmetics ($3000)</label>
                     </div>
                     <div class="custom-select" id="internalExternalDropdown">
-                        <select id="internalExternalDropdownSelect">
+                        <select id="internalExternalDropdownSelect" onchange="updateTotal()">
                             <option value="1">1</option>
                             <option value="2">2</option>
                             <option value="3">3</option>
@@ -565,11 +619,11 @@
                     </div>
                     <div class="custom-radio-group" id="engineRadios">
                         <label>
-                            <input type="radio" name="engineTier" value="35000">
+                            <input type="radio" name="engineTier" value="35000" onchange="updateTotal()">
                             T4 ($35000)
                         </label>
                         <label>
-                            <input type="radio" name="engineTier" value="50000">
+                            <input type="radio" name="engineTier" value="50000" onchange="updateTotal()">
                             T5 ($50000)
                         </label>
                     </div>
@@ -579,11 +633,11 @@
                     </div>
                     <div class="custom-radio-group" id="transmissionRadios">
                         <label>
-                            <input type="radio" name="transmissionTier" value="20000">
+                            <input type="radio" name="transmissionTier" value="20000" onchange="updateTotal()">
                             T3 ($20000)
                         </label>
                         <label>
-                            <input type="radio" name="transmissionTier" value="25000">
+                            <input type="radio" name="transmissionTier" value="25000" onchange="updateTotal()">
                             T4 ($25000)
                         </label>
                     </div>
@@ -597,23 +651,23 @@
                     </div>
                     <div class="custom-radio-group" id="suspensionRadios">
                         <label>
-                            <input type="radio" name="suspensionTier" value="10000">
+                            <input type="radio" name="suspensionTier" value="10000" onchange="updateTotal()">
                             T1 ($10000)
                         </label>
                         <label>
-                            <input type="radio" name="suspensionTier" value="12500">
+                            <input type="radio" name="suspensionTier" value="12500" onchange="updateTotal()">
                             T2 ($12500)
                         </label>
                         <label>
-                            <input type="radio" name="suspensionTier" value="15000">
+                            <input type="radio" name="suspensionTier" value="15000" onchange="updateTotal()">
                             T3 ($15000)
                         </label>
                         <label>
-                            <input type="radio" name="suspensionTier" value="20000">
+                            <input type="radio" name="suspensionTier" value="20000" onchange="updateTotal()">
                             T4 ($20000)
                         </label>
                         <label>
-                            <input type="radio" name="suspensionTier" value="25000">
+                            <input type="radio" name="suspensionTier" value="25000" onchange="updateTotal()">
                             T5 ($25000)
                         </label>
                     </div>
@@ -715,11 +769,11 @@
                     </div>
                     <div class="custom-radio-group" id="completeCosmeticsPerformanceRadios">
                         <label>
-                            <input type="radio" name="completeCosmeticsPerformanceOption" value="200000">
+                            <input type="radio" name="completeCosmeticsPerformanceOption" value="200000" onchange="updateTotal()">
                             Car ($200000)
                         </label>
                         <label>
-                            <input type="radio" name="completeCosmeticsPerformanceOption" value="160000">
+                            <input type="radio" name="completeCosmeticsPerformanceOption" value="160000" onchange="updateTotal()">
                             Motorcycle ($160000)
                         </label>
                     </div>
@@ -737,7 +791,15 @@
     <div class="footer">
         <img src="https://dunb17ur4ymx4.cloudfront.net/webstore/logos/dff4075a111d8b04e1dacb963331e903fa457e04.png" alt="Footer Logo">
     </div>
+    <div id="workVehiclePopup" class="popup" style="display: none;">
+        <h3>Is it a work vehicle?</h3>
+        <button onclick="setWorkVehicle(true)">Yes</button>
+        <button onclick="setWorkVehicle(false)">No</button>
+    </div>
     <script>
+        let isWorkVehicle = false;
+        let currentDiscountType = '';
+
         function toggleFolder(contentId, iconId) {
             var folderContent = document.getElementById(contentId);
             var folderIcon = document.getElementById(iconId);
@@ -755,14 +817,47 @@
             var discountRadios = document.getElementById('discountRadios');
             if (discountCheckbox.checked) {
                 discountRadios.style.display = 'flex';
+                currentDiscountType = ''; // Reset current discount type
             } else {
                 discountRadios.style.display = 'none';
                 var radios = document.querySelectorAll('.discount-radios input[type="radio"]');
                 radios.forEach(function(radio) {
                     radio.checked = false;
                 });
+                isWorkVehicle = false; // Reset work vehicle status when discount is removed
+                currentDiscountType = ''; // Reset current discount type
                 updateTotal(); // Ensure total is updated when discount is removed
             }
+        }
+
+        function checkWorkVehicle(discountType) {
+            if (discountType === "PD" || discountType === "EMS") {
+                if (currentDiscountType !== discountType) {
+                    currentDiscountType = discountType;
+                    var fullRepairCheckbox = document.getElementById('fullRepair');
+                    var partialRepairCheckbox = document.getElementById('partialRepair');
+                    var oneCategoryRepairCheckbox = document.getElementById('oneCategoryRepair');
+                    var tiresCheckbox = document.getElementById('tires');
+
+                    if (fullRepairCheckbox.checked || partialRepairCheckbox.checked || oneCategoryRepairCheckbox.checked || tiresCheckbox.checked) {
+                        document.getElementById('workVehiclePopup').style.display = 'block';
+                    } else {
+                        updateTotal();
+                    }
+                } else {
+                    updateTotal();
+                }
+            } else {
+                isWorkVehicle = false; // Reset work vehicle status for BS discount
+                currentDiscountType = discountType;
+                updateTotal();
+            }
+        }
+
+        function setWorkVehicle(isWork) {
+            isWorkVehicle = isWork;
+            document.getElementById('workVehiclePopup').style.display = 'none';
+            updateTotal();
         }
 
         function updateTotal() {
@@ -775,10 +870,13 @@
             var internalExternalDropdownSelect = document.getElementById('internalExternalDropdownSelect');
             var totalAmount = document.getElementById('totalAmount');
             var total = 0;
+            var discountExclusions = ["pdPackage", "fullPerformanceEMS"];
 
             checkboxes.forEach(function(checkbox) {
                 if (checkbox.checked) {
-                    if (checkbox.id === 'tires') {
+                    if (isWorkVehicle && (currentDiscountType === "PD" || currentDiscountType === "EMS") && (checkbox.id === 'fullRepair' || checkbox.id === 'partialRepair' || checkbox.id === 'oneCategoryRepair' || checkbox.id === 'tires')) {
+                        // Repairs and tires are free for work vehicles under PD or EMS discount
+                    } else if (checkbox.id === 'tires') {
                         total += parseInt(checkbox.value) * parseInt(tiresDropdownSelect.value);
                     } else if (checkbox.id === 'advancedRepairKits') {
                         total += parseInt(checkbox.value) * parseInt(kitsDropdownSelect.value);
@@ -820,7 +918,34 @@
             if (discountCheckbox.checked) {
                 var selectedDiscount = document.querySelector('input[name="discountOption"]:checked');
                 if (selectedDiscount) {
-                    total = Math.floor(total * 0.8); // Apply 20% discount and round down
+                    var discountType = selectedDiscount.value;
+                    if (discountType === "PD" || discountType === "EMS") {
+                        var discountableTotal = 0;
+                        checkboxes.forEach(function(checkbox) {
+                            if (checkbox.checked && !discountExclusions.includes(checkbox.id)) {
+                                if (isWorkVehicle && (checkbox.id === 'fullRepair' || checkbox.id === 'partialRepair' || checkbox.id === 'oneCategoryRepair' || checkbox.id === 'tires')) {
+                                    // No additional cost for repairs and tires if work vehicle
+                                } else if (checkbox.id === 'tires') {
+                                    discountableTotal += parseInt(checkbox.value) * parseInt(tiresDropdownSelect.value);
+                                } else if (checkbox.id === 'advancedRepairKits') {
+                                    discountableTotal += parseInt(checkbox.value) * parseInt(kitsDropdownSelect.value);
+                                } else if (checkbox.id === 'paint') {
+                                    discountableTotal += parseInt(checkbox.value) * parseInt(paintDropdownSelect.value);
+                                } else if (checkbox.id === 'bumper') {
+                                    discountableTotal += parseInt(checkbox.value) * parseInt(bumperDropdownSelect.value);
+                                } else if (checkbox.id === 'skirt') {
+                                    discountableTotal += parseInt(checkbox.value) * parseInt(skirtDropdownSelect.value);
+                                } else if (checkbox.id === 'internalExternal') {
+                                    discountableTotal += parseInt(checkbox.value) * parseInt(internalExternalDropdownSelect.value);
+                                } else {
+                                    discountableTotal += parseInt(checkbox.value);
+                                }
+                            }
+                        });
+                        total -= Math.floor(discountableTotal * 0.2); // Apply 20% discount and round down
+                    } else {
+                        total = Math.floor(total * 0.8); // Apply 20% discount and round down for BS or other options
+                    }
                 }
             }
 
@@ -858,6 +983,9 @@
             var discountCheckbox = document.getElementById('discountCheckbox');
             discountCheckbox.checked = false;
             toggleDiscountRadios();
+
+            isWorkVehicle = false;
+            currentDiscountType = ''; // Reset discount type when clearing all
 
             updateTotal(); // Ensure total is updated to $0 after clearing
         }
@@ -1192,6 +1320,9 @@
             document.querySelector('.clear-button').addEventListener('click', function() {
                 setTimeout(updateTotal, 0);
             });
+
+            // Check work vehicle popup on page load
+            checkWorkVehicle();
         });
     </script>
 </body>
